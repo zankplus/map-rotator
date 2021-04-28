@@ -18,8 +18,8 @@ public static void main(String[] args)
 {
       RMMap map = new RMMap("C:\\RPG Maker 2000 workspace\\Rotating Map\\Map0010.lmu");
       map.rotateClockwise();
-//		map.rotateCounterclockwise();
-//		map.rotate180();
+//	map.rotateCounterclockwise();
+//	map.rotate180();
       map.saveMap("Map0011.lmu");		
 }
 ```
