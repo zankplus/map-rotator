@@ -96,8 +96,7 @@ ID      Data type       Purpose
 0x47	Integer array	Lower layer tile data
 0x48	Integer array	Upper layer tile data
 0x51	Object list	Event layer data
-0x5B	Integer		Number of times the map has been saved (starts at
-02)
+0x5B	Integer		Number of times the map has been saved (starts at 02)
 ```
 
 Note that some of these values may be absent. Notably, map width and height are only stored in the data if their values differ from the default 20 and 15 (respectively). If RM2K reads a map file and these values are absent, it assumes these default values. Similarly, if the map is saved with the first tileset listed in the database, the value of `0x01` is implicit and the item is omitted. Note also that some map information appears to not be stored in the map file at all. The map name and the encounters BGM, battle background, teleport, escape, and save sections of the map properties window don't seem to store information in the .lmu file.
