@@ -29,7 +29,7 @@ Fuller explanation of these methods can be found in the files themselves, but sh
 
 What follows is a summary of what I've learned about RPG Maker 2000's map files and the hex data that constitutes them. As I have only explored and documented the workings of RPGMaker map data as far as is necessary for the purposes of my own goal of rotating maps, please bear in mind that the information I've collected is incomplete and imperfect. I present the work in its present state in hopes of helping anyone interested in RM2K map hacking to orient themselves and sparing them the ugly work of reconstructing the map structure from scratch on their own.
 
-If you would like to contribute information, corrections, or clarifications to this guide, or if you have any questions about it, feel free to email me at *claymcooper* at *gmail* dot *com*.
+I discovered after writing most of this that more complete information about particular object structures is available on [EasyRPG Wiki](https://wiki.easyrpg.org/). Where their tables are more thorough than my own, I link to specific pages on the Wiki for reference.
 
 ### A note on language
 
@@ -77,7 +77,7 @@ So the sequence A2 B9 57 represents the value `10001001110011000111`, or 564,423
 
 ### Reading different items
 
-So far I've described how to extract data from RM2K maps, but not how to read that data itself. The data item's ID tells RPG Maker what that data *is*, but not how to interpret it. That information isn't encoded in the object or in the map file but in RPG Maker itself. That means it's up to us to figure out what each ID means and how to read it through trial and error. The table below, which is surely incomplete, describes what each ID I've encountered in the map object represents and how its content is structured.
+So far I've described how to extract data from RM2K maps, but not how to read that data itself. The data item's ID tells RPG Maker what that data *is*, but not how to interpret it. That information isn't encoded in the object or in the map file but in RPG Maker itself. That means it's up to us to figure out what each ID means and how to read it through trial and error. The table below, which is surely incomplete, describes what each ID I've encountered in the map object represents and how its content is structured. (For more information, see the [LcfMapUnit page on EasyRPG Wiki](https://wiki.easyrpg.org/development/data-structure-reference/lcfmapunit)).
 
 ```
 ID      Data type       Purpose
@@ -99,7 +99,7 @@ ID      Data type       Purpose
 0x5B	Integer		Number of times the map has been saved (starts at 02)
 ```
 
-Note that some of these values may be absent. Notably, map width and height are only stored in the data if their values differ from the default 20 and 15 (respectively). If RM2K reads a map file and these values are absent, it assumes these default values. Similarly, if the map is saved with the first tileset listed in the database, the value of `0x01` is implicit and the item is omitted. Note also that some map information appears to not be stored in the map file at all. The map name and the encounters BGM, battle background, teleport, escape, and save sections of the map properties window don't seem to store information in the .lmu file.
+Note that some of these values may be absent. Notably, map width and height are only stored in the data if their values differ from the default 20 and 15 (respectively). If RM2K reads a map file and these values are absent, it assumes these default values. Similarly, if the map is saved with the first tileset listed in the database, the value of `0x01` is implicit and the item is omitted. Note also that some map information is not stored in the map file at all. The map name and the encounters, BGM, battle background, teleport, escape, and save sections of the map properties window are stored in RPG_RT.lmt per [EasyRPG Wiki](https://wiki.easyrpg.org/development/data-structure-reference/lcfmaptree).
 
 Integer values are read as VLQs. Booleans are read the same way as integers, but (as is standard) only take the values 0 (false) and true (1). I haven't played with strings at all but they appear to be a series of ASCII characters with no extra metadata attached. For example, the data item `20 07 43 6F 73 6D 7F 73 31`, representing the map's chosen parallax background graphic, has the ID `20` and size `07`, with the next 7 values representing the text `Cosmos1` (the name of the graphic, minus its filename extension) in ASCII. That's the whole data item.
 
@@ -236,7 +236,7 @@ The upper layer stores its tile data in the same format as the lower layer; it t
 
 ### Reading event layer map data
 
-The basic structure of the event layer data is simple: it's an array of objects as described under the _Reading different items_ heading. As events are objects, they aren't wholly different in structure from the map; the main differences are that the header of an event just contains the event's ID (the same Event ID displayed at the top of RM2K's event editor window) and that IDs of its data items mean different things than the IDs of the map's data items. These IDs (as many as I've discovered) are summarized below:
+The basic structure of the event layer data is simple: it's an array of objects as described under the _Reading different items_ heading. As events are objects, they aren't wholly different in structure from the map; the main differences are that the header of an event just contains the event's ID (the same Event ID displayed at the top of RM2K's event editor window) and that IDs of its data items mean different things than the IDs of the map's data items. These IDs are summarized below (with a little more detail available on [EasyRPG Wiki](https://wiki.easyrpg.org/development/data-structure-reference/lcfmapunit/map-event)):
 
 
 ```
@@ -247,7 +247,7 @@ ID      Data type       Purpose
 05	Object list     Page data
 ```
 
-This picture is complicated in practice by the fact that most of the event's content is located in its page data. This should be unsurprising for most RM2K users: most information about an event is set on a per page basis. It just means that a lot of essential event data, like what the event does or what it looks like, is buried one layer deeper than simple identifying information. Page data exists as a list inside the event object in much the same way that event data exists as a list inside of the map object. The internal structure of page objects is described as follows:
+This picture is complicated in practice by the fact that most of the event's content is located in its page data. This should be unsurprising for most RM2K users: most information about an event is set on a per page basis. It just means that a lot of essential event data, like what the event does or what it looks like, is buried one layer deeper than simple identifying information. Page data exists as a list inside the event object in much the same way that event data exists as a list inside of the map object. I've summarized my own findings below, but a more detailed information is available on [this page at EasyRPG Wiki](https://wiki.easyrpg.org/development/data-structure-reference/lcfmapunit/map-event/event-page).
 
 ```
 ID      Data type       Purpose
